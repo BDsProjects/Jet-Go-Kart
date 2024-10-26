@@ -1,0 +1,11 @@
+﻿  main.cpp
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(134,45): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  imgui_impl_dx11.cpp
+  imgui_impl_win32.cpp
+  Generating Code...
+  JetOp.vcxproj -> C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\bin\Debug\JetOp.exe
