@@ -1,0 +1,194 @@
+// Add these includes at the top of the file
+#include <boost/asio.hpp>
+#include <boost/asio/serial_port.hpp>
+#include <boost/system/error_code.hpp>
+#include <thread>
+#include <queue>
+#include <mutex>
+
+// Add this class definition after the existing includes and before the DirectX objects
+class JetCatInterface {
+public:
+    JetCatInterface() : io_service_(), serial_port_(io_service_) {}
+
+    bool connect(const std::string& port, unsigned int baud_rate = 9600) {
+        try {
+            serial_port_.open(port);
+            serial_port_.set_option(boost::asio::serial_port_base::baud_rate(baud_rate));
+            serial_port_.set_option(boost::asio::serial_port_base::character_size(8));
+            serial_port_.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+            serial_port_.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
+            serial_port_.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
+            
+            // Start the read thread
+            running_ = true;
+            read_thread_ = std::thread(&JetCatInterface::readThread, this);
+            return true;
+        }
+        catch (const boost::system::system_error& e) {
+            lastError_ = e.what();
+            return false;
+        }
+    }
+
+    void disconnect() {
+        if (running_) {
+            running_ = false;
+            if (read_thread_.joinable()) {
+                read_thread_.join();
+            }
+            if (serial_port_.is_open()) {
+                serial_port_.close();
+            }
+        }
+    }
+
+    bool sendCommand(const std::string& cmd) {
+        try {
+            boost::asio::write(serial_port_, boost::asio::buffer(cmd + "\r\n"));
+            return true;
+        }
+        catch (const boost::system::system_error& e) {
+            lastError_ = e.what();
+            return false;
+        }
+    }
+
+    std::string getLastError() const { return lastError_; }
+
+    bool getLatestData(std::string& data) {
+        std::lock_guard<std::mutex> lock(queue_mutex_);
+        if (!received_data_.empty()) {
+            data = received_data_.front();
+            received_data_.pop();
+            return true;
+        }
+        return false;
+    }
+
+    ~JetCatInterface() {
+        disconnect();
+    }
+
+private:
+    void readThread() {
+        boost::asio::streambuf response;
+        while (running_) {
+            try {
+                boost::asio::read_until(serial_port_, response, "\r\n");
+                std::string line{
+                    boost::asio::buffers_begin(response.data()),
+                    boost::asio::buffers_end(response.data())
+                };
+                response.consume(response.size());
+
+                std::lock_guard<std::mutex> lock(queue_mutex_);
+                received_data_.push(line);
+            }
+            catch (const boost::system::system_error& e) {
+                if (running_) {
+                    lastError_ = e.what();
+                }
+            }
+        }
+    }
+
+    boost::asio::io_service io_service_;
+    boost::asio::serial_port serial_port_;
+    std::thread read_thread_;
+    std::atomic<bool> running_{false};
+    std::queue<std::string> received_data_;
+    std::mutex queue_mutex_;
+    std::string lastError_;
+};
+
+// Add these members to the AppState struct
+struct AppState {
+    // ... existing members ...
+
+    struct {
+        JetCatInterface ecu;
+        bool connected = false;
+        std::string portName = "COM1";
+        int baudRate = 9600;
+        std::string lastResponse;
+        std::string lastError;
+    } ecuComm;
+};
+
+// Update the ECU Settings render function to include serial communication controls
+void RenderECUSettings()
+{
+    ImGui::Begin("ECU Settings", nullptr, ImGuiWindowFlags_NoCollapse);
+    
+    if (ImGui::Button("Back to Main Menu"))
+        g_appState.currentPage = Page::MainMenu;
+        
+    ImGui::Separator();
+
+    // Serial Connection Settings
+    static char portBuffer[32] = "COM1";
+    ImGui::InputText("Port", portBuffer, sizeof(portBuffer));
+    ImGui::InputInt("Baud Rate", &g_appState.ecuComm.baudRate);
+
+    if (!g_appState.ecuComm.connected) {
+        if (ImGui::Button("Connect to ECU")) {
+            g_appState.ecuComm.connected = g_appState.ecuComm.ecu.connect(portBuffer, g_appState.ecuComm.baudRate);
+            if (!g_appState.ecuComm.connected) {
+                g_appState.ecuComm.lastError = g_appState.ecuComm.ecu.getLastError();
+            }
+        }
+    } else {
+        if (ImGui::Button("Disconnect")) {
+            g_appState.ecuComm.ecu.disconnect();
+            g_appState.ecuComm.connected = false;
+        }
+    }
+
+    if (!g_appState.ecuComm.lastError.empty()) {
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Error: %s", g_appState.ecuComm.lastError.c_str());
+    }
+
+    ImGui::Separator();
+
+    // ECU Commands
+    static char cmdBuffer[256] = "";
+    ImGui::InputText("Command", cmdBuffer, sizeof(cmdBuffer));
+    if (ImGui::Button("Send Command") && g_appState.ecuComm.connected) {
+        if (!g_appState.ecuComm.ecu.sendCommand(cmdBuffer)) {
+            g_appState.ecuComm.lastError = g_appState.ecuComm.ecu.getLastError();
+        }
+    }
+
+    // Display latest response
+    std::string newData;
+    if (g_appState.ecuComm.ecu.getLatestData(newData)) {
+        g_appState.ecuComm.lastResponse = newData;
+    }
+    if (!g_appState.ecuComm.lastResponse.empty()) {
+        ImGui::Text("Last Response: %s", g_appState.ecuComm.lastResponse.c_str());
+    }
+
+    ImGui::Separator();
+    
+    // Existing ECU parameter controls
+    ImGui::SliderFloat("Parameter 1", &g_appState.ecuSettings.parameter1, 0.0f, 100.0f, "%.1f");
+    ImGui::SliderFloat("Parameter 2", &g_appState.ecuSettings.parameter2, 0.0f, 100.0f, "%.1f");
+    ImGui::Checkbox("Setting 1", &g_appState.ecuSettings.setting1);
+    
+    if (ImGui::Button("Save Settings")) {
+        // Add save settings functionality
+    }
+    
+    if (ImGui::Button("Load Settings")) {
+        // Add load settings functionality
+    }
+    
+    ImGui::End();
+}
+
+// Make sure to update the cleanup in WinMain to handle the ECU connection
+    // In the cleanup section before return 0:
+    if (g_appState.ecuComm.connected) {
+        g_appState.ecuComm.ecu.disconnect();
+    }
