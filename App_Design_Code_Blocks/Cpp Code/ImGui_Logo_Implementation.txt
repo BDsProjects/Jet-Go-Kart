@@ -1,0 +1,177 @@
+#include <vector>
+#include "stb_image.h"
+
+// Structure to hold texture information
+struct TextureData {
+    GLuint textureID = 0;
+    int width = 0;
+    int height = 0;
+    
+    void cleanup() {
+        if (textureID != 0) {
+            glDeleteTextures(1, &textureID);
+            textureID = 0;
+        }
+    }
+};
+
+class LogoManager {
+private:
+    std::unordered_map<std::string, TextureData> m_logos;
+
+public:
+    ~LogoManager() {
+        // Cleanup all textures
+        for (auto& pair : m_logos) {
+            pair.second.cleanup();
+        }
+    }
+
+    bool LoadLogo(const char* filename, const char* identifier) {
+        TextureData texData;
+        
+        // Load image using stb_image
+        int channels;
+        unsigned char* data = stbi_load(filename, &texData.width, &texData.height, &channels, STBI_rgb_alpha);
+        
+        if (!data) {
+            fprintf(stderr, "Failed to load image: %s\n", filename);
+            return false;
+        }
+
+        // Generate OpenGL texture
+        glGenTextures(1, &texData.textureID);
+        glBindTexture(GL_TEXTURE_2D, texData.textureID);
+
+        // Setup texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        // Upload texture data
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texData.width, texData.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        // Free image data
+        stbi_image_free(data);
+
+        // Store texture data
+        m_logos[identifier] = texData;
+        
+        return true;
+    }
+
+    void RenderLogo(const char* identifier, const ImVec2& size = ImVec2(0, 0), 
+                   const ImVec4& tint_col = ImVec4(1, 1, 1, 1)) {
+        auto it = m_logos.find(identifier);
+        if (it == m_logos.end()) {
+            return;
+        }
+
+        const TextureData& texData = it->second;
+        ImVec2 renderSize = size;
+        
+        // If no size specified, use original image size
+        if (renderSize.x <= 0 || renderSize.y <= 0) {
+            renderSize = ImVec2((float)texData.width, (float)texData.height);
+        }
+
+        ImGui::Image((void*)(intptr_t)texData.textureID, renderSize, 
+                    ImVec2(0, 0), ImVec2(1, 1), tint_col);
+    }
+
+    // Get the size of a loaded logo
+    ImVec2 GetLogoSize(const char* identifier) {
+        auto it = m_logos.find(identifier);
+        if (it != m_logos.end()) {
+            return ImVec2((float)it->second.width, (float)it->second.height);
+        }
+        return ImVec2(0, 0);
+    }
+
+    bool IsLogoLoaded(const char* identifier) {
+        return m_logos.find(identifier) != m_logos.end();
+    }
+};
+
+// Add this to your application state
+struct AppState {
+    Page currentPage;
+    TurbineState turbineState;
+    LogoManager logoManager;  // Add this line
+    // ... other state variables
+};
+
+void InitializeLogos(AppState& state) {
+    // Load logos at startup
+    state.logoManager.LoadLogo("assets/company_logo.png", "company_logo");
+    state.logoManager.LoadLogo("assets/product_logo.png", "product_logo");
+    // Add more logos as needed
+}
+
+void RenderMainMenu() {
+    ImGui::Begin("Main Menu", nullptr, 
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | 
+                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+
+    // Center the window
+    ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+    ImVec2 windowSize = ImVec2(400, 500);  // Adjust size as needed
+    ImGui::SetWindowSize(windowSize);
+    ImGui::SetWindowPos(ImVec2((screenSize.x - windowSize.x) * 0.5f,
+                              (screenSize.y - windowSize.y) * 0.5f));
+
+    // Add padding and center align
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 20));
+    
+    // Center the company logo
+    if (g_appState.logoManager.IsLogoLoaded("company_logo")) {
+        ImVec2 logoSize = g_appState.logoManager.GetLogoSize("company_logo");
+        float scaleFactor = std::min(300.0f / logoSize.x, 100.0f / logoSize.y);
+        ImVec2 scaledSize(logoSize.x * scaleFactor, logoSize.y * scaleFactor);
+        
+        float xPos = (windowSize.x - scaledSize.x) * 0.5f;
+        ImGui::SetCursorPosX(xPos);
+        g_appState.logoManager.RenderLogo("company_logo", scaledSize);
+    }
+
+    // Add some space between logos
+    ImGui::Dummy(ImVec2(0, 20));
+
+    // Center and render the product logo if available
+    if (g_appState.logoManager.IsLogoLoaded("product_logo")) {
+        ImVec2 logoSize = g_appState.logoManager.GetLogoSize("product_logo");
+        float scaleFactor = std::min(200.0f / logoSize.x, 80.0f / logoSize.y);
+        ImVec2 scaledSize(logoSize.x * scaleFactor, logoSize.y * scaleFactor);
+        
+        float xPos = (windowSize.x - scaledSize.x) * 0.5f;
+        ImGui::SetCursorPosX(xPos);
+        g_appState.logoManager.RenderLogo("product_logo", scaledSize);
+    }
+
+    ImGui::Dummy(ImVec2(0, 30));  // Add space before buttons
+
+    // Center-align buttons
+    float buttonWidth = 200.0f;
+    float buttonHeight = 40.0f;
+    
+    auto CenterButton = [&](const char* label) {
+        float xPos = (windowSize.x - buttonWidth) * 0.5f;
+        ImGui::SetCursorPosX(xPos);
+        bool clicked = ImGui::Button(label, ImVec2(buttonWidth, buttonHeight));
+        return clicked;
+    };
+
+    if (CenterButton("Start Operation"))
+        g_appState.currentPage = Page::TurbineOperation;
+
+    if (CenterButton("Settings"))
+        g_appState.currentPage = Page::Settings;
+
+    if (CenterButton("Exit"))
+        g_appState.shouldExit = true;
+
+    ImGui::PopStyleVar();  // Pop ItemSpacing
+
+    ImGui::End();
+}
