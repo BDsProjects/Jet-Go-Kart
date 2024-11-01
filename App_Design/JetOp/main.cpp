@@ -7,14 +7,6 @@
 #include "imgui_impl_dx11.h"
 #include <vector>
 #include <cmath>
-#include "stb_image.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <iostream>
-
 
 // DirectX 11 objects
 ID3D11Device* g_pd3dDevice = nullptr;
@@ -33,8 +25,6 @@ enum class Page {
 
 struct AppState {
     Page currentPage = Page::MainMenu;
-
-
 
     // Example state variables for different pages
     struct {
@@ -70,98 +60,63 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #include "imgui.h"
 
-void RenderMainMenu() {
-    // Window setup
+void RenderMainMenu()
+{
+    // Get the viewport and its size
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImVec2 viewportSize = viewport->Size;
+
+    // Set window position to center of viewport
+    ImVec2 windowSize(viewportSize.x * 0.8f, viewportSize.y * 0.8f);  // Use 80% of viewport size
+    ImVec2 windowPos(
+        viewport->Pos.x + (viewportSize.x - windowSize.x) * 0.5f,
+        viewport->Pos.y + (viewportSize.y - windowSize.y) * 0.5f
+    );
+
     ImGui::SetNextWindowPos(windowPos);
     ImGui::SetNextWindowSize(windowSize);
+
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove;
 
     ImGui::Begin("Control System Interface", nullptr, window_flags);
 
-    // Calculate dimensions
+    // Calculate button dimensions based on window size
     float buttonWidth = windowSize.x * 0.3f;  // 30% of window width
     float buttonHeight = windowSize.y * 0.12f; // 12% of window height
     float buttonSpacing = windowSize.y * 0.05f; // 5% of window height
+
+    // Center buttons horizontally and add some top padding
     float windowWidth = ImGui::GetWindowWidth();
     float buttonX = (windowWidth - buttonWidth) * 0.5f;
-
-    // Logo rendering section
-    // Company logo
-    if (g_appState.logoManager.IsLogoLoaded("company_logo")) {
-        ImVec2 logoSize = g_appState.logoManager.GetLogoSize("company_logo");
-        // Scale logo to fit width while maintaining aspect ratio
-        float maxLogoWidth = windowWidth * 0.6f; // 60% of window width
-        float scale = std::min(maxLogoWidth / logoSize.x, windowSize.y * 0.2f / logoSize.y);
-        ImVec2 scaledSize(logoSize.x * scale, logoSize.y * scale);
-
-        // Center the logo
-        float logoX = (windowWidth - scaledSize.x) * 0.5f;
-        ImGui::SetCursorPosX(logoX);
-        ImGui::SetCursorPosY(windowSize.y * 0.05f); // 5% from top
-
-        // Add a slight tint to match the button theme
-        ImVec4 logoTint(0.9f, 0.9f, 1.0f, 1.0f);
-        g_appState.logoManager.RenderLogo("company_logo", scaledSize, logoTint);
-    }
-
-    // Product logo (smaller, below company logo)
-    if (g_appState.logoManager.IsLogoLoaded("product_logo")) {
-        ImVec2 logoSize = g_appState.logoManager.GetLogoSize("product_logo");
-        float maxLogoWidth = windowWidth * 0.4f; // 40% of window width
-        float scale = std::min(maxLogoWidth / logoSize.x, windowSize.y * 0.15f / logoSize.y);
-        ImVec2 scaledSize(logoSize.x * scale, logoSize.y * scale);
-
-        float logoX = (windowWidth - scaledSize.x) * 0.5f;
-        ImGui::SetCursorPosX(logoX);
-        ImGui::SetCursorPosY(windowSize.y * 0.28f); // Position below company logo
-
-        ImVec4 logoTint(0.85f, 0.85f, 0.95f, 1.0f);
-        g_appState.logoManager.RenderLogo("product_logo", scaledSize, logoTint);
-    }
-
-    // Button section - start lower to accommodate logos
-    ImGui::SetCursorPosY(windowSize.y * 0.45f); // Start buttons at 45% from top
+    ImGui::SetCursorPosY(windowSize.y * 0.1f); // Start 10% from top
 
     // Style the buttons with a darker theme
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.3f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.4f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.4f, 0.5f, 1.0f));
 
-    // Add subtle text shadow to buttons
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
-    auto RenderButtonWithShadow = [&](const char* label, const ImVec2& size) {
-        ImGui::SetCursorPosX(buttonX);
-        ImVec2 textPos = ImGui::GetCursorPos();
-
-        // Render button
-        bool clicked = ImGui::Button(label, size);
-
-        // Render shadow text (disabled for better clarity)
-        /*ImGui::SetCursorPos(ImVec2(textPos.x + 1, textPos.y + 1));
-        ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 0.5f), label);*/
-
-        return clicked;
-        };
-
     // Render each button with proper spacing
-    if (RenderButtonWithShadow("Turbine Operation", ImVec2(buttonWidth, buttonHeight)))
+    ImGui::SetCursorPosX(buttonX);
+    if (ImGui::Button("Turbine Operation", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::TurbineOperation;
 
+    ImGui::SetCursorPosX(buttonX);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
-    if (RenderButtonWithShadow("GSU Test Functions", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("GSU Test Functions", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::GSUTestFunctions;
 
+    ImGui::SetCursorPosX(buttonX);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
-    if (RenderButtonWithShadow("Log Data Screen", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("Log Data Screen", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::LogDataScreen;
 
+    ImGui::SetCursorPosX(buttonX);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
-    if (RenderButtonWithShadow("ECU Settings", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("ECU Settings", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::ECUSettings;
 
-    ImGui::PopStyleVar();
     ImGui::PopStyleColor(3);
     ImGui::End();
 }
