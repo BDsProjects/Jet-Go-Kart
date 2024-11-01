@@ -6,6 +6,7 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <vector>
+#include <cmath>
 
 // DirectX 11 objects
 ID3D11Device* g_pd3dDevice = nullptr;
@@ -57,39 +58,183 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-// Page rendering functions
+#include "imgui.h"
+
 void RenderMainMenu()
 {
-    ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse);
+    // Get the viewport and its size
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImVec2 viewportSize = viewport->Size;
 
-    if (ImGui::Button("Turbine Operation", ImVec2(200, 50)))
+    // Set window position to center of viewport
+    ImVec2 windowSize(viewportSize.x * 0.8f, viewportSize.y * 0.8f);  // Use 80% of viewport size
+    ImVec2 windowPos(
+        viewport->Pos.x + (viewportSize.x - windowSize.x) * 0.5f,
+        viewport->Pos.y + (viewportSize.y - windowSize.y) * 0.5f
+    );
+
+    ImGui::SetNextWindowPos(windowPos);
+    ImGui::SetNextWindowSize(windowSize);
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove;
+
+    ImGui::Begin("Control System Interface", nullptr, window_flags);
+
+    // Calculate button dimensions based on window size
+    float buttonWidth = windowSize.x * 0.3f;  // 30% of window width
+    float buttonHeight = windowSize.y * 0.12f; // 12% of window height
+    float buttonSpacing = windowSize.y * 0.05f; // 5% of window height
+
+    // Center buttons horizontally and add some top padding
+    float windowWidth = ImGui::GetWindowWidth();
+    float buttonX = (windowWidth - buttonWidth) * 0.5f;
+    ImGui::SetCursorPosY(windowSize.y * 0.1f); // Start 10% from top
+
+    // Style the buttons with a darker theme
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.3f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.4f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.4f, 0.5f, 1.0f));
+
+    // Render each button with proper spacing
+    ImGui::SetCursorPosX(buttonX);
+    if (ImGui::Button("Turbine Operation", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::TurbineOperation;
 
-    if (ImGui::Button("GSU Test Functions", ImVec2(200, 50)))
+    ImGui::SetCursorPosX(buttonX);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
+    if (ImGui::Button("GSU Test Functions", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::GSUTestFunctions;
 
-    if (ImGui::Button("Log Data Screen", ImVec2(200, 50)))
+    ImGui::SetCursorPosX(buttonX);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
+    if (ImGui::Button("Log Data Screen", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::LogDataScreen;
 
-    if (ImGui::Button("ECU Settings", ImVec2(200, 50)))
+    ImGui::SetCursorPosX(buttonX);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
+    if (ImGui::Button("ECU Settings", ImVec2(buttonWidth, buttonHeight)))
         g_appState.currentPage = Page::ECUSettings;
 
+    ImGui::PopStyleColor(3);
     ImGui::End();
+}
+
+// Utility function to convert degrees to radians
+constexpr float DEG2RAD = 0.0174532925f;
+
+void DrawCircularGauge(const char* label, float value, float minValue, float maxValue,
+    float radius = 40.0f, ImU32 color = IM_COL32(255, 0, 0, 255),
+    const char* format = "%.0f", float angleMin = 135.0f, float angleMax = 405.0f) {
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 center = ImVec2(pos.x + radius, pos.y + radius);
+
+    // Draw gauge background
+    const float angleRange = angleMax - angleMin;
+    const int numSegments = 32;
+    draw_list->AddCircle(center, radius, IM_COL32(128, 128, 128, 255), numSegments, 2.0f);
+
+    // Draw gauge arc
+    float t = (value - minValue) / (maxValue - minValue);
+    float angleValue = angleMin + t * angleRange;
+
+    // Draw major ticks and labels
+    const int numTicks = 10;
+    for (int i = 0; i <= numTicks; i++) {
+        float tick_angle = angleMin + (i * angleRange / numTicks);
+        float cos_a = cosf(tick_angle * DEG2RAD);
+        float sin_a = sinf(tick_angle * DEG2RAD);
+
+        ImVec2 tick_pos = ImVec2(center.x + cos_a * radius,
+            center.y + sin_a * radius);
+        ImVec2 tick_pos2 = ImVec2(center.x + cos_a * (radius - 8),
+            center.y + sin_a * (radius - 8));
+
+        draw_list->AddLine(tick_pos, tick_pos2, IM_COL32(255, 255, 255, 255), 1.0f);
+
+        // Add labels for major ticks
+        float labelValue = minValue + (i * (maxValue - minValue) / numTicks);
+        char label_text[32];
+        sprintf_s(label_text, "%.0f", labelValue);
+
+        ImVec2 label_pos = ImVec2(center.x + cos_a * (radius - 20),
+            center.y + sin_a * (radius - 20));
+        draw_list->AddText(label_pos, IM_COL32(255, 255, 255, 255), label_text);
+    }
+
+    // Draw needle
+    float cos_a = cosf(angleValue * DEG2RAD);
+    float sin_a = sinf(angleValue * DEG2RAD);
+    ImVec2 needle_end = ImVec2(center.x + cos_a * (radius - 5),
+        center.y + sin_a * (radius - 5));
+    draw_list->AddLine(center, needle_end, color, 2.0f);
+
+    // Draw center dot
+    draw_list->AddCircleFilled(center, 5.0f, color);
+
+    // Draw value text
+    char overlay_text[32];
+    sprintf_s(overlay_text, format, value);
+    ImVec2 text_size = ImGui::CalcTextSize(overlay_text);
+    ImVec2 text_pos = ImVec2(center.x - text_size.x * 0.5f,
+        center.y + radius * 0.5f);
+    draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), overlay_text);
+
+    // Draw label
+    ImVec2 label_size = ImGui::CalcTextSize(label);
+    ImVec2 label_pos = ImVec2(center.x - label_size.x * 0.5f,
+        center.y - radius * 0.5f);
+    draw_list->AddText(label_pos, IM_COL32(255, 255, 255, 255), label);
+
+    // Reserve space for the gauge in ImGui
+    ImGui::Dummy(ImVec2(radius * 2, radius * 2));
 }
 
 void RenderTurbineOperation()
 {
     ImGui::Begin("Turbine Operation", nullptr, ImGuiWindowFlags_NoCollapse);
-
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
+    ImGui::Separator();
+
+    // Add some spacing and create a row for gauges
+    ImGui::BeginGroup();
+    ImGui::Columns(2, "gauges", false);
+
+    // RPM Gauge
+    DrawCircularGauge("RPM",
+        g_appState.turbineState.turbineSpeed * 60.0f, // Convert speed percentage to RPM
+        0.0f,    // Min RPM
+        6000.0f, // Max RPM
+        50.0f,   // Radius
+        IM_COL32(255, 0, 0, 255), // Red color
+        "%.0f RPM");
+
+    ImGui::NextColumn();
+
+    // Temperature Gauge
+    static float temperature = 25.0f; // You might want to add this to your turbine state
+    DrawCircularGauge("Temperature",
+        temperature,
+        0.0f,    // Min temperature
+        150.0f,  // Max temperature
+        50.0f,   // Radius
+        IM_COL32(255, 165, 0, 255), // Orange color
+        "%.1f °C");
+
+    ImGui::Columns(1);
+    ImGui::EndGroup();
 
     ImGui::Separator();
 
+    // Original controls
     ImGui::SliderFloat("Turbine Speed", &g_appState.turbineState.turbineSpeed, 0.0f, 100.0f, "%.1f%%");
     ImGui::Checkbox("Turbine Running", &g_appState.turbineState.isRunning);
 
-    // Add more turbine controls here
+    // Add temperature control slider
+    ImGui::SliderFloat("Temperature", &temperature, 0.0f, 150.0f, "%.1f °C");
 
     ImGui::End();
 }
