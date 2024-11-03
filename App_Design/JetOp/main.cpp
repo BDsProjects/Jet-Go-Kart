@@ -6,15 +6,6 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <vector>
-#include <cmath>
-#include "stb_image.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <iostream>
-
 
 // DirectX 11 objects
 ID3D11Device* g_pd3dDevice = nullptr;
@@ -33,8 +24,6 @@ enum class Page {
 
 struct AppState {
     Page currentPage = Page::MainMenu;
-
-
 
     // Example state variables for different pages
     struct {
@@ -68,218 +57,39 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-#include "imgui.h"
+// Page rendering functions
+void RenderMainMenu()
+{
+    ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse);
 
-void RenderMainMenu() {
-    // Window setup
-    ImGui::SetNextWindowPos(windowPos);
-    ImGui::SetNextWindowSize(windowSize);
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove;
-
-    ImGui::Begin("Control System Interface", nullptr, window_flags);
-
-    // Calculate dimensions
-    float buttonWidth = windowSize.x * 0.3f;  // 30% of window width
-    float buttonHeight = windowSize.y * 0.12f; // 12% of window height
-    float buttonSpacing = windowSize.y * 0.05f; // 5% of window height
-    float windowWidth = ImGui::GetWindowWidth();
-    float buttonX = (windowWidth - buttonWidth) * 0.5f;
-
-    // Logo rendering section
-    // Company logo
-    if (g_appState.logoManager.IsLogoLoaded("company_logo")) {
-        ImVec2 logoSize = g_appState.logoManager.GetLogoSize("company_logo");
-        // Scale logo to fit width while maintaining aspect ratio
-        float maxLogoWidth = windowWidth * 0.6f; // 60% of window width
-        float scale = std::min(maxLogoWidth / logoSize.x, windowSize.y * 0.2f / logoSize.y);
-        ImVec2 scaledSize(logoSize.x * scale, logoSize.y * scale);
-
-        // Center the logo
-        float logoX = (windowWidth - scaledSize.x) * 0.5f;
-        ImGui::SetCursorPosX(logoX);
-        ImGui::SetCursorPosY(windowSize.y * 0.05f); // 5% from top
-
-        // Add a slight tint to match the button theme
-        ImVec4 logoTint(0.9f, 0.9f, 1.0f, 1.0f);
-        g_appState.logoManager.RenderLogo("company_logo", scaledSize, logoTint);
-    }
-
-    // Product logo (smaller, below company logo)
-    if (g_appState.logoManager.IsLogoLoaded("product_logo")) {
-        ImVec2 logoSize = g_appState.logoManager.GetLogoSize("product_logo");
-        float maxLogoWidth = windowWidth * 0.4f; // 40% of window width
-        float scale = std::min(maxLogoWidth / logoSize.x, windowSize.y * 0.15f / logoSize.y);
-        ImVec2 scaledSize(logoSize.x * scale, logoSize.y * scale);
-
-        float logoX = (windowWidth - scaledSize.x) * 0.5f;
-        ImGui::SetCursorPosX(logoX);
-        ImGui::SetCursorPosY(windowSize.y * 0.28f); // Position below company logo
-
-        ImVec4 logoTint(0.85f, 0.85f, 0.95f, 1.0f);
-        g_appState.logoManager.RenderLogo("product_logo", scaledSize, logoTint);
-    }
-
-    // Button section - start lower to accommodate logos
-    ImGui::SetCursorPosY(windowSize.y * 0.45f); // Start buttons at 45% from top
-
-    // Style the buttons with a darker theme
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.3f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.4f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.4f, 0.5f, 1.0f));
-
-    // Add subtle text shadow to buttons
-    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
-    auto RenderButtonWithShadow = [&](const char* label, const ImVec2& size) {
-        ImGui::SetCursorPosX(buttonX);
-        ImVec2 textPos = ImGui::GetCursorPos();
-
-        // Render button
-        bool clicked = ImGui::Button(label, size);
-
-        // Render shadow text (disabled for better clarity)
-        /*ImGui::SetCursorPos(ImVec2(textPos.x + 1, textPos.y + 1));
-        ImGui::TextColored(ImVec4(0.0f, 0.0f, 0.0f, 0.5f), label);*/
-
-        return clicked;
-        };
-
-    // Render each button with proper spacing
-    if (RenderButtonWithShadow("Turbine Operation", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("Turbine Operation", ImVec2(200, 50)))
         g_appState.currentPage = Page::TurbineOperation;
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
-    if (RenderButtonWithShadow("GSU Test Functions", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("GSU Test Functions", ImVec2(200, 50)))
         g_appState.currentPage = Page::GSUTestFunctions;
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
-    if (RenderButtonWithShadow("Log Data Screen", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("Log Data Screen", ImVec2(200, 50)))
         g_appState.currentPage = Page::LogDataScreen;
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSpacing);
-    if (RenderButtonWithShadow("ECU Settings", ImVec2(buttonWidth, buttonHeight)))
+    if (ImGui::Button("ECU Settings", ImVec2(200, 50)))
         g_appState.currentPage = Page::ECUSettings;
 
-    ImGui::PopStyleVar();
-    ImGui::PopStyleColor(3);
     ImGui::End();
-}
-
-// Utility function to convert degrees to radians
-constexpr float DEG2RAD = 0.0174532925f;
-
-void DrawCircularGauge(const char* label, float value, float minValue, float maxValue,
-    float radius = 40.0f, ImU32 color = IM_COL32(255, 0, 0, 255),
-    const char* format = "%.0f", float angleMin = 135.0f, float angleMax = 405.0f) {
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    ImVec2 pos = ImGui::GetCursorScreenPos();
-    ImVec2 center = ImVec2(pos.x + radius, pos.y + radius);
-
-    // Draw gauge background
-    const float angleRange = angleMax - angleMin;
-    const int numSegments = 32;
-    draw_list->AddCircle(center, radius, IM_COL32(128, 128, 128, 255), numSegments, 2.0f);
-
-    // Draw gauge arc
-    float t = (value - minValue) / (maxValue - minValue);
-    float angleValue = angleMin + t * angleRange;
-
-    // Draw major ticks and labels
-    const int numTicks = 10;
-    for (int i = 0; i <= numTicks; i++) {
-        float tick_angle = angleMin + (i * angleRange / numTicks);
-        float cos_a = cosf(tick_angle * DEG2RAD);
-        float sin_a = sinf(tick_angle * DEG2RAD);
-
-        ImVec2 tick_pos = ImVec2(center.x + cos_a * radius,
-            center.y + sin_a * radius);
-        ImVec2 tick_pos2 = ImVec2(center.x + cos_a * (radius - 8),
-            center.y + sin_a * (radius - 8));
-
-        draw_list->AddLine(tick_pos, tick_pos2, IM_COL32(255, 255, 255, 255), 1.0f);
-
-        // Add labels for major ticks
-        float labelValue = minValue + (i * (maxValue - minValue) / numTicks);
-        char label_text[32];
-        sprintf_s(label_text, "%.0f", labelValue);
-
-        ImVec2 label_pos = ImVec2(center.x + cos_a * (radius - 20),
-            center.y + sin_a * (radius - 20));
-        draw_list->AddText(label_pos, IM_COL32(255, 255, 255, 255), label_text);
-    }
-
-    // Draw needle
-    float cos_a = cosf(angleValue * DEG2RAD);
-    float sin_a = sinf(angleValue * DEG2RAD);
-    ImVec2 needle_end = ImVec2(center.x + cos_a * (radius - 5),
-        center.y + sin_a * (radius - 5));
-    draw_list->AddLine(center, needle_end, color, 2.0f);
-
-    // Draw center dot
-    draw_list->AddCircleFilled(center, 5.0f, color);
-
-    // Draw value text
-    char overlay_text[32];
-    sprintf_s(overlay_text, format, value);
-    ImVec2 text_size = ImGui::CalcTextSize(overlay_text);
-    ImVec2 text_pos = ImVec2(center.x - text_size.x * 0.5f,
-        center.y + radius * 0.5f);
-    draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), overlay_text);
-
-    // Draw label
-    ImVec2 label_size = ImGui::CalcTextSize(label);
-    ImVec2 label_pos = ImVec2(center.x - label_size.x * 0.5f,
-        center.y - radius * 0.5f);
-    draw_list->AddText(label_pos, IM_COL32(255, 255, 255, 255), label);
-
-    // Reserve space for the gauge in ImGui
-    ImGui::Dummy(ImVec2(radius * 2, radius * 2));
 }
 
 void RenderTurbineOperation()
 {
     ImGui::Begin("Turbine Operation", nullptr, ImGuiWindowFlags_NoCollapse);
+
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
-    ImGui::Separator();
-
-    // Add some spacing and create a row for gauges
-    ImGui::BeginGroup();
-    ImGui::Columns(2, "gauges", false);
-
-    // RPM Gauge
-    DrawCircularGauge("RPM",
-        g_appState.turbineState.turbineSpeed * 60.0f, // Convert speed percentage to RPM
-        0.0f,    // Min RPM
-        6000.0f, // Max RPM
-        50.0f,   // Radius
-        IM_COL32(255, 0, 0, 255), // Red color
-        "%.0f RPM");
-
-    ImGui::NextColumn();
-
-    // Temperature Gauge
-    static float temperature = 25.0f; // You might want to add this to your turbine state
-    DrawCircularGauge("Temperature",
-        temperature,
-        0.0f,    // Min temperature
-        150.0f,  // Max temperature
-        50.0f,   // Radius
-        IM_COL32(255, 165, 0, 255), // Orange color
-        "%.1f °C");
-
-    ImGui::Columns(1);
-    ImGui::EndGroup();
 
     ImGui::Separator();
 
-    // Original controls
     ImGui::SliderFloat("Turbine Speed", &g_appState.turbineState.turbineSpeed, 0.0f, 100.0f, "%.1f%%");
     ImGui::Checkbox("Turbine Running", &g_appState.turbineState.isRunning);
 
-    // Add temperature control slider
-    ImGui::SliderFloat("Temperature", &temperature, 0.0f, 150.0f, "%.1f °C");
+    // Add more turbine controls here
 
     ImGui::End();
 }
