@@ -7,3 +7,7 @@ App_Design/.vs/JetOp/FileContentIndex/ca06d9c9-fc86-47db-bf21-c4059aa52ffa.vsidx
 App_Design/.vs/
 *.VC.db
 *.ipch
+bin/
+obj/
+*.suo
+*.tlog
