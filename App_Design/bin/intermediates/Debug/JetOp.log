@@ -1,2 +1,128 @@
-﻿  LINK : C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\bin\Debug\JetOp.exe not found or not built by the last incremental link; performing full link
-  JetOp.vcxproj -> C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\bin\Debug\JetOp.exe
+﻿  main.cpp
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(114,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(114,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(114,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(114,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(114,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(114,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(115,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(115,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(121,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(121,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(121,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(121,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(121,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(121,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(122,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(122,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(128,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(128,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(128,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(128,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(128,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(128,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(129,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(129,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(135,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(135,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(135,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(135,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(135,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(135,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(136,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(136,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(142,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(142,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(142,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(142,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(142,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(142,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(143,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(143,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(149,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(149,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(149,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(149,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(149,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(149,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(150,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(150,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(156,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(156,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(156,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(156,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(156,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(156,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(157,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(157,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(163,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(163,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(163,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(163,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(163,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(163,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(164,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(164,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(170,14): error C2039: 'string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(170,14): error C2065: 'string': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(170,21): error C2146: syntax error: missing ';' before identifier 'command'
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(170,21): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(170,54): error C2039: 'to_string': is not a member of 'std'
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\vector(29,1):
+      see declaration of 'std'
+  
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(170,54): error C3861: 'to_string': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(171,27): error C2065: 'command': undeclared identifier
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(171,9): error C3861: 'SendSerialCommand': identifier not found
+C:\Users\billy\Repositories\Jet-Go-Kart\App_Design\JetOp\main.cpp(203,45): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
