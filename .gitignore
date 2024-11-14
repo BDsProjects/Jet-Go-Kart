@@ -11,3 +11,8 @@ bin/
 obj/
 *.suo
 *.tlog
+# Move extrernal dependencies to git large file storage (lfs)
+App_Design/JetOp/external/
+
+# Ensure .gitattributes is not ignored (required for Git LFS tracking)
+!App_Design/JetOp/external/.gitattributes
