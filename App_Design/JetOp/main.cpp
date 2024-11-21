@@ -57,6 +57,10 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+// Get the primary monitor's screen dimensions
+int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
 // Page rendering functions
 void RenderMainMenu()
 {
@@ -168,8 +172,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // Create application window
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"DX11 ImGui App", nullptr };
     RegisterClassExW(&wc);
-    HWND hwnd = CreateWindowW(wc.lpszClassName, L"Control System Interface", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
-
+    HWND hwnd = CreateWindowW(wc.lpszClassName, L"Control System Interface", WS_POPUP, 0, 0, screenWidth, screenHeight, nullptr, nullptr, wc.hInstance, nullptr);
+    //                        window class name, window title, window style (borderless), X-pos top-left-corner, Y-pos top-left-corner, width and height of the window, parent window, Menu, Instance handle, additional app data
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
     {
