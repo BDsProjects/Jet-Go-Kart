@@ -63,8 +63,18 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 // Page rendering functions
 void RenderMainMenu()
-{
-    ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse);
+{   
+
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Main Menu", nullptr, 
+        ImGuiWindowFlags_NoResize |      // Prevent user resizing
+        ImGuiWindowFlags_NoMove |        // Prevent window moving
+        ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
+        ImGuiWindowFlags_NoTitleBar);    // Remove title bar);
+        
 
     if (ImGui::Button("Turbine Operation", ImVec2(200, 50)))
         g_appState.currentPage = Page::TurbineOperation;
@@ -168,11 +178,16 @@ void RenderECUSettings()
 
 // Main code
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
+{   
+    // Get the primary monitor's screen dimensions
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     // Create application window
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"DX11 ImGui App", nullptr };
     RegisterClassExW(&wc);
-    HWND hwnd = CreateWindowW(wc.lpszClassName, L"Control System Interface", WS_POPUP, 0, 0, screenWidth, screenHeight, nullptr, nullptr, wc.hInstance, nullptr);
+
+    // Create a Borderless fullscreen window
+    HWND hwnd = CreateWindowW(wc.lpszClassName, L"Control System Interface", WS_POPUP | WS_SYSMENU, 0, 0, screenWidth, screenHeight, nullptr, nullptr, wc.hInstance, nullptr);
     //                        window class name, window title, window style (borderless), X-pos top-left-corner, Y-pos top-left-corner, width and height of the window, parent window, Menu, Instance handle, additional app data
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -182,6 +197,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
+    //// Optional: Set ImGui to use full screen dimensions
+    //ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
+    //ImGui::SetNextWindowPos(ImVec2(0, 0));
+
     // Show the window
     ShowWindow(hwnd, SW_SHOWDEFAULT);
     UpdateWindow(hwnd);
@@ -189,8 +208,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // Setup ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+
+    // Disable window resizing in ImGui
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigWindowsResizeFromEdges = false; // Prevent resize from edges
 
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
