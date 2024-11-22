@@ -10,6 +10,7 @@
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="basicSerComEx.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="CircularGauge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h" />
@@ -20,5 +21,6 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="imgui\imgui_impl_dx11.h" />
     <ClInclude Include="imgui\imgui_impl_win32.h" />
+    <ClInclude Include="CustGUIElems\CircularGauge.h" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
 #include <cmath>
 #include <imgui.h>
 #include <iostream>
-#include <"CircularGauge.h">
+#include <CircularGauge.h>
 
 
 // DirectX 11 objects
@@ -66,6 +66,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
+
+void RenderUI() {
+    DrawCircularGauge("Speed", 75.0f, 0.0f, 100.0f);
+}
+
 // Page rendering functions
 void RenderMainMenu()
 {   
@@ -120,6 +125,21 @@ void RenderTurbineOperation()
 
     ImGui::SliderFloat("Turbine Speed", &g_appState.turbineState.turbineSpeed, 0.0f, 100.0f, "%.1f%%");
     ImGui::Checkbox("Turbine Running", &g_appState.turbineState.isRunning);
+
+    // Add some spacing and create a row for gauges
+    ImGui::BeginGroup();
+    ImGui::Columns(2, "gauges", false);
+
+    // Draw circular gauge to represent the turbine speed
+    DrawCircularGauge("Turbine Speed Gauge", g_appState.turbineState.turbineSpeed, 0.0f, 100.0f);
+
+    ImGui::NextColumn();
+
+    // Draw circular gauge to represent the turbine speed
+    DrawCircularGauge("Turbine Speed Gauge", g_appState.turbineState.turbineSpeed, 0.0f, 100.0f);
+
+    ImGui::Columns(1);
+    ImGui::EndGroup();
 
     // Add more turbine controls here
 
