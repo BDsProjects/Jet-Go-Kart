@@ -104,8 +104,7 @@ void RenderMainMenu()
     ImGui::End();
 }
 
-void RenderTurbineOperation()
-{
+void RenderTurbineOperation() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
@@ -114,10 +113,9 @@ void RenderTurbineOperation()
         ImGuiWindowFlags_NoResize |      // Prevent user resizing
         ImGuiWindowFlags_NoMove |        // Prevent window moving
         ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
-        ImGuiWindowFlags_NoTitleBar);    // Remove title bar);
+        ImGuiWindowFlags_NoTitleBar);    // Remove title bar
 
-    
-
+    // Back to main menu button
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
 
@@ -126,25 +124,21 @@ void RenderTurbineOperation()
     ImGui::SliderFloat("Turbine Speed", &g_appState.turbineState.turbineSpeed, 0.0f, 100.0f, "%.1f%%");
     ImGui::Checkbox("Turbine Running", &g_appState.turbineState.isRunning);
 
-    // Add some spacing and create a row for gauges
-    ImGui::BeginGroup();
-    ImGui::Columns(2, "gauges", false);
+    ImGui::Separator();
+
+    // Set cursor position for the gauge to ensure visibility
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.0f);
 
     // Draw circular gauge to represent the turbine speed
+    ImDrawList* draw_list = ImGui::GetForegroundDrawList();
+    std::cout << "Drawing Gauge" << std::endl; // Debug statement to make sure it reaches this point.
     DrawCircularGauge("Turbine Speed Gauge", g_appState.turbineState.turbineSpeed, 0.0f, 100.0f);
 
-    ImGui::NextColumn();
-
-    // Draw circular gauge to represent the turbine speed
-    DrawCircularGauge("Turbine Speed Gauge", g_appState.turbineState.turbineSpeed, 0.0f, 100.0f);
-
-    ImGui::Columns(1);
-    ImGui::EndGroup();
-
-    // Add more turbine controls here
+    ImGui::Dummy(ImVec2(100.0f, 100.0f));  // Reserve enough space for the gauge
 
     ImGui::End();
 }
+
 
 void RenderGSUTestFunctions()
 {
