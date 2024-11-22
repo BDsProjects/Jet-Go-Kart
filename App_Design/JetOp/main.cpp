@@ -1,15 +1,18 @@
 // main.cpp
+// At the top of main.cpp, update the includes order:
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <windows.h>
 #include <d3d11.h>
 #include <tchar.h>
-#include "imgui.h"
+#include <imgui.h>
+#include <imgui_internal.h>
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <vector>
 #include <cmath>
-#include <imgui.h>
 #include <iostream>
-#include <CircularGauge.h>
+#include "gauge.h"  // Make sure this is the correct path to your gauge.h file
+
 
 
 // DirectX 11 objects
@@ -107,13 +110,14 @@ void RenderMainMenu()
 void RenderTurbineOperation() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
     ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::Begin("Turbine Operation", nullptr,
-        ImGuiWindowFlags_NoResize |      // Prevent user resizing
-        ImGuiWindowFlags_NoMove |        // Prevent window moving
-        ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
-        ImGuiWindowFlags_NoTitleBar);    // Remove title bar
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar);
 
     // Back to main menu button
     if (ImGui::Button("Back to Main Menu"))
@@ -121,20 +125,28 @@ void RenderTurbineOperation() {
 
     ImGui::Separator();
 
+    // Center the controls and gauge
+    float windowWidth = ImGui::GetWindowWidth();
+    float contentWidth = 300.0f; // Adjust based on your needs
+    ImGui::SetCursorPosX((windowWidth - contentWidth) * 0.5f);
+
+    // Controls
+    ImGui::BeginGroup();
     ImGui::SliderFloat("Turbine Speed", &g_appState.turbineState.turbineSpeed, 0.0f, 100.0f, "%.1f%%");
     ImGui::Checkbox("Turbine Running", &g_appState.turbineState.isRunning);
+    ImGui::EndGroup();
 
     ImGui::Separator();
 
-    // Set cursor position for the gauge to ensure visibility
+    // Center the gauge
+    float gaugeRadius = 150.0f;
+    ImGui::SetCursorPosX((windowWidth - gaugeRadius * 2) * 0.5f);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.0f);
 
-    // Draw circular gauge to represent the turbine speed
-    ImDrawList* draw_list = ImGui::GetForegroundDrawList();
-    std::cout << "Drawing Gauge" << std::endl; // Debug statement to make sure it reaches this point.
-    DrawCircularGauge("Turbine Speed Gauge", g_appState.turbineState.turbineSpeed, 0.0f, 100.0f);
-
-    ImGui::Dummy(ImVec2(100.0f, 100.0f));  // Reserve enough space for the gauge
+    // Draw the gauge
+    DrawCircularGauge("Turbine Speed Gauge",
+        g_appState.turbineState.turbineSpeed,
+        0.0f, 100.0f, gaugeRadius);
 
     ImGui::End();
 }
