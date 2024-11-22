@@ -96,7 +96,17 @@ void RenderMainMenu()
 
 void RenderTurbineOperation()
 {
-    ImGui::Begin("Turbine Operation", nullptr, ImGuiWindowFlags_NoCollapse);
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Turbine Operation", nullptr,
+        ImGuiWindowFlags_NoResize |      // Prevent user resizing
+        ImGuiWindowFlags_NoMove |        // Prevent window moving
+        ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
+        ImGuiWindowFlags_NoTitleBar);    // Remove title bar);
+
+    
 
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
@@ -113,7 +123,17 @@ void RenderTurbineOperation()
 
 void RenderGSUTestFunctions()
 {
-    ImGui::Begin("GSU Test Functions", nullptr, ImGuiWindowFlags_NoCollapse);
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("GSU Test Functions", nullptr,
+        ImGuiWindowFlags_NoResize |      // Prevent user resizing
+        ImGuiWindowFlags_NoMove |        // Prevent window moving
+        ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
+        ImGuiWindowFlags_NoTitleBar);    // Remove title bar);
+
+    
 
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
@@ -136,7 +156,18 @@ void RenderGSUTestFunctions()
 
 void RenderLogDataScreen()
 {
-    ImGui::Begin("Log Data Screen", nullptr, ImGuiWindowFlags_NoCollapse);
+
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("Log Data Screen", nullptr,
+        ImGuiWindowFlags_NoResize |      // Prevent user resizing
+        ImGuiWindowFlags_NoMove |        // Prevent window moving
+        ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
+        ImGuiWindowFlags_NoTitleBar);    // Remove title bar);
+
+    
 
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
@@ -157,7 +188,17 @@ void RenderLogDataScreen()
 
 void RenderECUSettings()
 {
-    ImGui::Begin("ECU Settings", nullptr, ImGuiWindowFlags_NoCollapse);
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    ImGui::SetNextWindowSize(ImVec2(screenWidth, screenHeight));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::Begin("ECU Settings", nullptr,
+        ImGuiWindowFlags_NoResize |      // Prevent user resizing
+        ImGuiWindowFlags_NoMove |        // Prevent window moving
+        ImGuiWindowFlags_NoCollapse |    // Prevent window collapsing
+        ImGuiWindowFlags_NoTitleBar);    // Remove title bar);
+
+    
 
     if (ImGui::Button("Back to Main Menu"))
         g_appState.currentPage = Page::MainMenu;
