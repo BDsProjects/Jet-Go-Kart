@@ -88,6 +88,9 @@ void RenderMainMenu()
     if (ImGui::Button("ECU Settings", ImVec2(200, 50)))
         g_appState.currentPage = Page::ECUSettings;
 
+    if (ImGui::Button("Exit JetOp", ImVec2(200, 50))) {
+        std::exit(0); // An abrupt way to exit the application
+    }
     ImGui::End();
 }
 
