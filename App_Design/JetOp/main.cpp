@@ -6,6 +6,10 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <vector>
+#include <cmath>
+#include <imgui.h>
+#include <iostream>
+
 
 // DirectX 11 objects
 ID3D11Device* g_pd3dDevice = nullptr;
