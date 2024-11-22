@@ -9,6 +9,7 @@
 #include <cmath>
 #include <imgui.h>
 #include <iostream>
+#include <"CircularGauge.h">
 
 
 // DirectX 11 objects
