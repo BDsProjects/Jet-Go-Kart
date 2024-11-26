@@ -12,6 +12,8 @@
 #include <cmath>
 #include <iostream>
 #include "gauge.h"  // Make sure this is the correct path to your gauge.h file
+#include <memory>
+#include <string>
 
 
 
